@@ -219,6 +219,10 @@ rev_new_classes = {new_classes[i]: i for i in new_classes}
 
 for c in sorted(rev_new_classes):
     for l in alphabet:
-        print(str(c) + ', ' + l + ' -> ' + str(new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]]))
+        if '-o' in sys.argv:
+            print(c, l, new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]])
+        else:
+            print(str(c) + ', ' + l + ' -> ' + str(new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]]))
+
 print('Initial:', new_classes[classes[tuple(sorted(eps_reachable[initial]))]])
 print('Accepting:', ', '.join(map(str, sorted({new_classes[classes[i]] for i in new_final}))))
