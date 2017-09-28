@@ -220,7 +220,7 @@ rev_new_classes = {new_classes[i]: i for i in new_classes}
 for c in sorted(rev_new_classes):
     for l in alphabet:
         if '-o' in sys.argv:
-            print(c, l, new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]])
+            print(c, new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]], l)
         else:
             print(str(c) + ', ' + l + ' -> ' + str(new_classes[classes[go(rev_classes[rev_new_classes[c]], l)]]))
 
