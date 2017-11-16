@@ -29,8 +29,6 @@ for i in range(len(rules)):
 FIRST = {'$': {'$'}}
 for l, r in rules:
     FIRST[l] = set()
-    if not r:
-        FIRST[l].add('')
     for i in r:
         if not i.isupper():
             FIRST[i] = {i}
@@ -100,8 +98,11 @@ if DEBUG:
     print('States:\n')
     for i, s in enumerate(states):
         print(i)
+        tt = {}
         for t in s:
-            print('{} -> {}, {}'.format(rules[t[0]][0], rules[t[0]][1][:t[1]] + '.' + rules[t[0]][1][t[1]:], t[2]))
+            tt.setdefault((t[0], t[1]), []).append(t[2])
+        for t, c in tt.items():
+            print('{} -> {}, {}'.format(rules[t[0]][0], rules[t[0]][1][:t[1]] + '.' + rules[t[0]][1][t[1]:], '|'.join(sorted(c))))
         print()
 
 
