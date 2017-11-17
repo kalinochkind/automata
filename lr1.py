@@ -26,26 +26,34 @@ rules_for_symbol = {}
 for i in range(len(rules)):
     rules_for_symbol.setdefault(rules[i][0], []).append(i)
 
+can_be_eps = set()
+
 FIRST = {'$': {'$'}}
 for l, r in rules:
     FIRST[l] = set()
+    if not r:
+        can_be_eps.add(l)
     for i in r:
         if not i.isupper():
             FIRST[i] = {i}
 
 for i in range(len(rules)):
     for l, r in rules:
-        if r:
-            FIRST[l] |= FIRST[r[0]]
+        for j in r:
+            FIRST[l] |= FIRST[j]
+            if j not in can_be_eps:
+                break
+        else:
+            can_be_eps.add(l)
 
 
 def first(s):
     ans = set()
     for c in s:
         ans |= FIRST[c]
-        if '' not in FIRST[c]:
-            return ans
-    return {}
+        if c not in can_be_eps:
+            break
+    return ans
 
 terminals = {i for l, r in rules for i in r if not i.isupper()} | {'$'}
 symbols = {i for l, r in rules for i in r} | {'$'}
@@ -155,7 +163,10 @@ if DEBUG:
 for i, c in enumerate(word + '$'):
     char_printed = False
     while True:
-        trans = transitions[(stack[-1], c)]
+        trans = transitions.get((stack[-1], c))
+        if trans is None:
+            print('FAIL: position {}, unknown symbol "{}"'.format(i, c))
+            sys.exit(1)
         if trans[1]:
             to_pop = len(rules[trans[1][0]][1])
             if to_pop:
